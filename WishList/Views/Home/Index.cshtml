@@ -1,0 +1,12 @@
+﻿@model IEnumerable<WishList.Models.User>
+
+<h2>Select a list to view</h2>
+<br/>
+<ul class="list-unstyled row">
+    @foreach (var user in Model)
+    {
+        <li class="col-md-3">
+            @Html.ActionLink(user.Name, "List", new { id = user.Id }, new { @class = "people"})
+        </li>
+    }
+</ul>

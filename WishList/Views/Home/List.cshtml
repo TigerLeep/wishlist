@@ -1,0 +1,56 @@
+﻿@using System.Security.Cryptography.X509Certificates
+@using System.Text
+@using System.Text.RegularExpressions
+@model WishList.ViewModels.Home.ListViewModel
+
+<br/>
+<br/>
+<h2>Wish List for @Model.User.Name</h2>
+<p>
+    @Html.ActionLink("add new item", "Create", new { id = @Model.User.Id }, new { style="padding-left: 15px;" })
+</p>
+<table class="table table-condensed table-striped">
+    <tr>
+        <th>Item</th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model.Items) {
+    <tr>
+        <td>@Html.Raw(parseDescription(item.Description))</td>
+        <td style="min-width:140px; max-width: 140px;">
+            @Html.ActionLink("edit", "Edit", new { id=item.Id }, new { @class="small" }) |
+            @Html.ActionLink("remove", "Delete", new { id = item.Id }, new { @class = "small" }) |
+            @Html.ActionLink("up", "MoveItemUp", new { id = item.Id }, new { @class = "small" }) |
+            @Html.ActionLink("down", "MoveItemDown", new { id = item.Id }, new { @class = "small" })
+        </td>
+    </tr>
+}
+
+</table>
+
+@functions {
+
+    string parseDescription(string description)
+    {
+        description = description.Replace(Environment.NewLine, "[*br*]");
+        description = description.Replace("[br][*br*]", "[br]");
+        description = description.Replace("[*br*]", "[br]");
+        description = description.Replace("[br]", "<br>");
+
+        const string linkPattern = @"\[(([^\]]*)(\|))?(https?:[^\]]*)\]";
+        Func<Match, string> formatLink = (Match match) =>
+        {
+            var linkText = match.Groups[2].Value;
+            var linkUrl = match.Groups[4].Value;
+            if (string.IsNullOrEmpty(linkText))
+            {
+                linkText = linkUrl;
+            }
+            return string.Format("<a href='{0}' target='_blank'>{1}</a>", linkUrl, linkText);
+        };
+        description = Regex.Replace(description, linkPattern, new MatchEvaluator(formatLink));
+
+        return description;
+    }
+}

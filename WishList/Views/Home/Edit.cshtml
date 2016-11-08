@@ -1,0 +1,37 @@
+﻿@model WishList.ViewModels.Home.EditViewModel
+
+<h2>Edit Item for @Model.User.Name</h2>
+<br />
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.User.Id, new { Name = "userId" })
+        @Html.HiddenFor(model => model.Item.Id)
+        <div class="form-group" style="margin-bottom: 0;">
+            @Html.LabelFor(model => model.Item.Description, htmlAttributes: new { @class = "col-md-12" })
+        </div>
+        <div class="form-group">
+            <div class="col-md-12">
+                @Html.TextAreaFor(model => model.Item.Description, new { @class = "form-control", rows = "10", autofocus = "autofocus" })
+                @Html.ValidationMessageFor(model => model.Item.Description, "", new { @class = "text-danger" })
+                Use [Text|http://...] for links.<br/>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-12">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("back to list without saving", "List", new { id = @Model.User.Id })
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
